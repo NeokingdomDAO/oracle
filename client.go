@@ -4,9 +4,9 @@ import (
 	"log"
 	"math/big"
 
+	"github.com/TelediskoDAO/oracle/blockchain"
+	"github.com/TelediskoDAO/oracle/odoo"
 	"github.com/ethereum/go-ethereum/common"
-	"gitlab.com/teledisko/dao/oracle/blockchain"
-	"gitlab.com/teledisko/dao/oracle/odoo"
 )
 
 func MintTokens(o *odoo.Client, d blockchain.DAO, p *odoo.Payroll) error {

@@ -3,9 +3,9 @@ package telediskotaler
 import (
 	"math/big"
 
+	"github.com/TelediskoDAO/oracle/blockchain"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"gitlab.com/teledisko/dao/oracle/blockchain"
 )
 
 type DAO struct {

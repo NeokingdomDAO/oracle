@@ -5,11 +5,11 @@ import (
 	"log"
 	"os"
 
-	"gitlab.com/teledisko/dao/oracle"
-	"gitlab.com/teledisko/dao/oracle/blockchain"
-	"gitlab.com/teledisko/dao/oracle/blockchain/telediskotaler"
-	"gitlab.com/teledisko/dao/oracle/config"
-	"gitlab.com/teledisko/dao/oracle/odoo"
+	"github.com/TelediskoDAO/oracle"
+	"github.com/TelediskoDAO/oracle/blockchain"
+	"github.com/TelediskoDAO/oracle/blockchain/telediskotaler"
+	"github.com/TelediskoDAO/oracle/config"
+	"github.com/TelediskoDAO/oracle/odoo"
 )
 
 type Clients struct {

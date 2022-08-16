@@ -9,6 +9,7 @@ The oracle bridges data from Odoo to the contracs in EVMOS.
 - Update: `git submodule update`
 
 ## Generate Contract Modules
+
 Below the instructions to generate the contract interactions modules starting from the contract ABIs.
 
 ### Requirements
@@ -17,6 +18,18 @@ Below the instructions to generate the contract interactions modules starting fr
 - [`abigen`](https://geth.ethereum.org/docs/dapp/native-bindings)
 
 ### Steps
+
+Compile the contracts:
+
+```
+cd contracts
+git checkout v1.0.0
+pnpm install
+pnpm compile
+```
+
+Run the generator
+
 ```
 # Example with contract ResolutionManager. Replace with required contract.
 

@@ -3,7 +3,6 @@ package blockchain
 import (
 	"context"
 	"crypto/ecdsa"
-	"errors"
 	"log"
 	"math/big"
 
@@ -26,13 +25,7 @@ func NewWalletFromPrivateKey(p string) (*Wallet, error) {
 		log.Fatal(err)
 	}
 
-	publicKey := privateKey.Public()
-	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-	if !ok {
-		return nil, errors.New("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
-	}
-
-	address := crypto.PubkeyToAddress(*publicKeyECDSA)
+	address := crypto.PubkeyToAddress(privateKey.PublicKey)
 
 	w := &Wallet{
 		Address:    address,

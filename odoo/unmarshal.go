@@ -24,7 +24,7 @@ func (f *IDLabelField) UnmarshalJSON(data []byte) error {
 		return nil
 	case []interface{}:
 		if len(v) != 2 {
-			return errors.New("Values to convert must be exactly two")
+			return errors.New("values to convert must be exactly two")
 		}
 		*f = IDLabelField{
 			ID:    int(v[0].(float64)),
@@ -32,7 +32,7 @@ func (f *IDLabelField) UnmarshalJSON(data []byte) error {
 		}
 		return nil
 	default:
-		return errors.New("Cannot unmarshal value")
+		return errors.New("cannot unmarshal value")
 	}
 }
 
@@ -55,18 +55,18 @@ func (a *Address) UnmarshalJSON(data []byte) error {
 	switch v := field.(type) {
 	case bool:
 		if v {
-			return errors.New("Address is set to true, but doesn't have a value")
+			return errors.New("address is set to true, but doesn't have a value")
 		}
 		*a = ""
 		return nil
 	case string:
 		if !validAddressRegexp.MatchString(v) {
-			return errors.New("Address is not formatted correctly")
+			return errors.New("address is not formatted correctly")
 		}
 		*a = Address(v)
 		return nil
 	default:
-		return errors.New("Cannot unmarshal value")
+		return errors.New("cannot unmarshal value")
 	}
 }
 
@@ -85,6 +85,6 @@ func (s *String) UnmarshalJSON(data []byte) error {
 		*s = String(v)
 		return nil
 	default:
-		return errors.New("Cannot unmarshal value")
+		return errors.New("cannot unmarshal value")
 	}
 }

@@ -45,7 +45,7 @@ func (c *Client) Authenticate(db string, username string, password string) error
 
 	//if n, ok := response.Result.(json.Number); !ok {
 	if uid, err := response.GetInt(); err != nil {
-		return errors.New("Error in getting UID")
+		return errors.New("error getting UID")
 	} else {
 		c.uid = int(uid)
 	}

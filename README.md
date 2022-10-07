@@ -41,3 +41,7 @@ rm ResolutionManager.json
 ```
 
 Or use the handy `./contracts.sh`.
+
+## Resources
+
+- https://goethereumbook.org/en/

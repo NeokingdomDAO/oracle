@@ -3,11 +3,10 @@ package main
 import (
 	"flag"
 	"log"
-	"os"
 
 	"github.com/TelediskoDAO/oracle"
 	"github.com/TelediskoDAO/oracle/blockchain"
-	"github.com/TelediskoDAO/oracle/blockchain/telediskotaler"
+	"github.com/TelediskoDAO/oracle/blockchain/neokingdom"
 	"github.com/TelediskoDAO/oracle/config"
 	"github.com/TelediskoDAO/oracle/odoo"
 )
@@ -29,7 +28,7 @@ func LoadClients() Clients {
 	w.Dial(config.EthEndpoint)
 	log.Println("Oracle address:", w.Address)
 
-	daoClient := telediskotaler.NewDAO(config.ERC20Address)
+	daoClient := neokingdom.NewDAO(config.ERC20Address)
 	daoClient.Connect(w)
 	odooClient := odoo.Dial("https://odoo.teledisko.com/jsonrpc")
 	if err := odooClient.Authenticate("teledisko", config.OdooUsername, config.OdooPassword); err != nil {
@@ -43,7 +42,6 @@ func LoadClients() Clients {
 }
 
 func main() {
-	dryRun := flag.Bool("dry", false, "Dry run")
 	flag.Parse()
 
 	clients := LoadClients()
@@ -53,10 +51,7 @@ func main() {
 		log.Fatal("Cannot get payroll: ", err)
 	}
 	payroll.PrintTable()
-	if *dryRun {
-		log.Println("(Dry run, stopping here)")
-		os.Exit(0)
-	}
+
 	if err := oracle.MintTokens(clients.Odoo, clients.DAO, payroll); err != nil {
 		log.Fatal(err)
 	}

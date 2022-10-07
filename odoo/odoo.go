@@ -58,7 +58,7 @@ type Timesheet struct {
 	CreateDate  string       `json:"create_date"`
 	User        IDLabelField `json:"user_id"`
 	Tier        IDLabelField `json:"tier"`
-	UnitAmount  float64      `json:"unit_amount"`
+	UnitAmount  float32      `json:"unit_amount"`
 	Subtask     IDLabelField `json:"subtask_id"`
 	DisplayName string       `json:"display_name"`
 	Project     IDLabelField `json:"project_id"`
@@ -117,6 +117,7 @@ func (c *Client) GetUsers() ([]User, error) {
 // TokenAllocation holds information about the token allocation for a user.
 type TokenAllocation struct {
 	User
+	HoursAmount float32
 	TokenAmount float32
 	Timesheets  []Timesheet
 }
@@ -137,6 +138,7 @@ func CalculateTokenAllocations(u []User, t []Timesheet) []TokenAllocation {
 		}
 		a.User = *userMap[timesheet.User.ID]
 		a.Timesheets = append(a.Timesheets, timesheet)
+		a.HoursAmount += timesheet.UnitAmount
 		a.TokenAmount += timesheet.TokenAmount
 	}
 	v := make([]TokenAllocation, len(allocationMap))

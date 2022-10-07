@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
+	"text/template"
 
-	"github.com/TelediskoDAO/oracle"
 	"github.com/TelediskoDAO/oracle/blockchain"
 	"github.com/TelediskoDAO/oracle/blockchain/neokingdom"
 	"github.com/TelediskoDAO/oracle/config"
@@ -41,6 +42,18 @@ func LoadClients() Clients {
 	}
 }
 
+func RenderResolutionPayments(p *odoo.Payroll) {
+	t, err := template.ParseFiles("cli/templates/resolution-payments.md")
+	if err != nil {
+		panic(err)
+	}
+	// Right now we need to copy paste, that's why we write to stdout
+	err = t.Execute(os.Stdout, p)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func main() {
 	flag.Parse()
 
@@ -51,8 +64,11 @@ func main() {
 		log.Fatal("Cannot get payroll: ", err)
 	}
 	payroll.PrintTable()
+	RenderResolutionPayments(payroll)
 
-	if err := oracle.MintTokens(clients.Odoo, clients.DAO, payroll); err != nil {
-		log.Fatal(err)
-	}
+	/*
+		if err := oracle.MintTokens(clients.Odoo, clients.DAO, payroll); err != nil {
+			log.Fatal(err)
+		}
+	*/
 }

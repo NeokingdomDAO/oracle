@@ -1,6 +1,7 @@
 package odoo
 
 import (
+	"log"
 	"reflect"
 	"testing"
 	"time"
@@ -193,6 +194,7 @@ func TestInterval_Increment(t *testing.T) {
 				End:      tt.fields.End,
 				Schedule: tt.fields.Schedule,
 			}
+			log.Printf("%+v", i)
 			if got := i.Increment(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Interval.Increment() = %v, want %v", got, tt.want)
 			}

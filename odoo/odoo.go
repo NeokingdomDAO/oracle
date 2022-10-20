@@ -152,12 +152,12 @@ func CalculateTokenAllocations(u []User, t []Timesheet) []TokenAllocation {
 	return v
 }
 
-type Payroll struct {
+type Rewards struct {
 	Interval         `json:"interval"`
 	TokenAllocations []TokenAllocation `json:"token_allocations"`
 }
 
-func (c *Client) GetPayroll() (*Payroll, error) {
+func (c *Client) GetRewards() (*Rewards, error) {
 	i := NewInterval(time.Now(), MonthlySchedule)
 	p := i.Decrement()
 	users, err := c.GetUsers()
@@ -172,12 +172,12 @@ func (c *Client) GetPayroll() (*Payroll, error) {
 
 	tokenAllocations := CalculateTokenAllocations(users, timesheets)
 
-	payroll := &Payroll{
+	rewards := &Rewards{
 		Interval:         p,
 		TokenAllocations: tokenAllocations,
 	}
 
-	return payroll, nil
+	return rewards, nil
 }
 
 func (c *Client) SetTimesheetTokenization(id []int, b bool) error {
@@ -191,8 +191,8 @@ func (c *Client) SetTimesheetTokenization(id []int, b bool) error {
 	return nil
 }
 
-func (p *Payroll) PrintTable() {
-	fmt.Printf("Payroll from %s to %s\n", p.Start.Format("Jan 2, 2006"), p.End.Format("Jan 2, 2006"))
+func (p *Rewards) PrintTable() {
+	fmt.Printf("Rewards from %s to %s\n", p.Start.Format("Jan 2, 2006"), p.End.Format("Jan 2, 2006"))
 	for _, a := range p.TokenAllocations {
 		fmt.Printf("%s <%s>, %s will receive %.2f Tokens\n", a.Name, a.Email, a.EthereumAddress, a.TokenAmount)
 		for _, t := range a.Timesheets {
@@ -203,11 +203,11 @@ func (p *Payroll) PrintTable() {
 }
 
 type RewardsResolution struct {
-	Payroll    `json:"payroll"`
+	Rewards    `json:"rewards"`
 	Resolution string `json:"resolution"`
 }
 
-func NewRewardsResolution(p *Payroll) *RewardsResolution {
+func NewRewardsResolution(p *Rewards) *RewardsResolution {
 	t, err := template.ParseFiles("cli/templates/resolution-payments.md")
 	if err != nil {
 		panic(err)
@@ -218,7 +218,7 @@ func NewRewardsResolution(p *Payroll) *RewardsResolution {
 		panic(err)
 	}
 	return &RewardsResolution{
-		Payroll:    *p,
+		Rewards:    *p,
 		Resolution: b.String(),
 	}
 }

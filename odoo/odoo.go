@@ -1,8 +1,10 @@
 package odoo
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"text/template"
 	"time"
 
 	"github.com/ybbus/jsonrpc/v2"
@@ -116,10 +118,10 @@ func (c *Client) GetUsers() ([]User, error) {
 
 // TokenAllocation holds information about the token allocation for a user.
 type TokenAllocation struct {
-	User
-	HoursAmount float32
-	TokenAmount float32
-	Timesheets  []Timesheet
+	User        `json:"user"`
+	HoursAmount float32     `json:"hours_amount"`
+	TokenAmount float32     `json:"token_amount"`
+	Timesheets  []Timesheet `json:"timesheets"`
 }
 
 // CalculateTokenAllocations takes users and timesheets and calculates the new
@@ -151,8 +153,8 @@ func CalculateTokenAllocations(u []User, t []Timesheet) []TokenAllocation {
 }
 
 type Payroll struct {
-	Interval
-	TokenAllocations []TokenAllocation
+	Interval         `json:"interval"`
+	TokenAllocations []TokenAllocation `json:"token_allocations"`
 }
 
 func (c *Client) GetPayroll() (*Payroll, error) {
@@ -197,5 +199,26 @@ func (p *Payroll) PrintTable() {
 			fmt.Printf("%d %.2fh\t%s\n", t.ID, t.UnitAmount, t.DisplayName)
 		}
 		fmt.Println()
+	}
+}
+
+type RewardsResolution struct {
+	Payroll    `json:"payroll"`
+	Resolution string `json:"resolution"`
+}
+
+func NewRewardsResolution(p *Payroll) *RewardsResolution {
+	t, err := template.ParseFiles("cli/templates/resolution-payments.md")
+	if err != nil {
+		panic(err)
+	}
+	b := bytes.Buffer{}
+	err = t.Execute(&b, p)
+	if err != nil {
+		panic(err)
+	}
+	return &RewardsResolution{
+		Payroll:    *p,
+		Resolution: b.String(),
 	}
 }

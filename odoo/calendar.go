@@ -11,9 +11,9 @@ const (
 )
 
 type Interval struct {
-	Start    time.Time
-	End      time.Time
-	Schedule Schedule
+	Start    time.Time `json:"start"`
+	End      time.Time `json:"end"`
+	Schedule Schedule  `json:"schedule"`
 }
 
 func NewInterval(t time.Time, s Schedule) Interval {

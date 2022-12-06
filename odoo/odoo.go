@@ -202,12 +202,18 @@ func (p *Rewards) PrintTable() {
 	}
 }
 
+type Resolution struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
 type RewardsResolution struct {
 	Rewards    `json:"rewards"`
-	Resolution string `json:"resolution"`
+	Resolution Resolution `json:"resolution"`
 }
 
 func NewRewardsResolution(p *Rewards) *RewardsResolution {
+	title := fmt.Sprintf("Rewarding Contributors for %s", p.Interval.Start.Format("January 2006"))
 	t, err := template.ParseFiles("cli/templates/resolution-payments.md")
 	if err != nil {
 		panic(err)
@@ -219,6 +225,6 @@ func NewRewardsResolution(p *Rewards) *RewardsResolution {
 	}
 	return &RewardsResolution{
 		Rewards:    *p,
-		Resolution: b.String(),
+		Resolution: Resolution{title, b.String()},
 	}
 }

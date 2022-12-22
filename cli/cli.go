@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"github.com/TelediskoDAO/oracle/config"
@@ -24,6 +25,8 @@ func main() {
 	}
 
 	r := gin.Default()
+	r.Use(cors.Default())
+
 	r.GET("/resolutions/rewards/last", func(c *gin.Context) {
 		r, err := odooClient.GetRewards()
 		if err != nil {

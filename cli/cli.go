@@ -16,11 +16,11 @@ func main() {
 	flag.Parse()
 	config, err := config.NewConfigFromEnv()
 	if err != nil {
-		log.Fatal(("Cannot read config"))
+		log.Fatal("Cannot read config: ", err)
 	}
 
-	odooClient := odoo.Dial("https://odoo.teledisko.com/jsonrpc")
-	if err := odooClient.Authenticate("teledisko", config.OdooUsername, config.OdooPassword); err != nil {
+	odooClient := odoo.Dial(config.OdooEndpoint)
+	if err := odooClient.Authenticate(config.OdooName, config.OdooUsername, config.OdooPassword); err != nil {
 		log.Fatal("Cannot login ", err)
 	}
 

@@ -10,6 +10,8 @@ import (
 type Config struct {
 	OdooUsername string
 	OdooPassword string
+	OdooName     string
+	OdooEndpoint string
 }
 
 func NewConfigFromEnv() (*Config, error) {
@@ -25,8 +27,20 @@ func NewConfigFromEnv() (*Config, error) {
 		return nil, errors.New("ODOO_PASSWORD is empty")
 	}
 
+	odooName := os.Getenv("ODOO_NAME")
+	if odooName == "" {
+		return nil, errors.New("ODOO_NAME is empty")
+	}
+
+	odooEndpoint := os.Getenv("ODOO_ENDPOINT")
+	if odooEndpoint == "" {
+		return nil, errors.New("ODOO_ENDPOINT is empty")
+	}
+
 	return &Config{
 		OdooUsername: odooUsername,
 		OdooPassword: odooPassword,
+		OdooName:     odooName,
+		OdooEndpoint: odooEndpoint,
 	}, nil
 }

@@ -59,9 +59,8 @@ type Timesheet struct {
 	Name        string       `json:"name"`
 	CreateDate  string       `json:"create_date"`
 	User        IDLabelField `json:"user_id"`
-	Tier        IDLabelField `json:"tier"`
+	Tier        IDLabelField `json:"tier_id"`
 	UnitAmount  float32      `json:"unit_amount"`
-	Subtask     IDLabelField `json:"subtask_id"`
 	DisplayName string       `json:"display_name"`
 	Project     IDLabelField `json:"project_id"`
 	//Amount      float32      `json:"amount"`
@@ -82,8 +81,7 @@ func (c *Client) GetTimesheets(i Interval) ([]Timesheet, error) {
 		NewFields(StructToTags(Timesheet{})...),
 		NewWhere("date", ">=", i.Start).
 			And("date", "<", i.End).
-			And("tokenized", "=", false).
-			And("tier", "!=", false),
+			And("tokenized", "=", false),
 	)
 	var r []Timesheet
 	err := c.rpcClient.CallFor(&r, "call", q.ToRequest())
@@ -160,16 +158,19 @@ type Rewards struct {
 func (c *Client) GetRewards() (*Rewards, error) {
 	i := NewInterval(time.Now(), MonthlySchedule)
 	p := i.Decrement()
+	fmt.Println("users")
 	users, err := c.GetUsers()
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("ts")
 	timesheets, err := c.GetTimesheets(p)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("ta")
 	tokenAllocations := CalculateTokenAllocations(users, timesheets)
 
 	rewards := &Rewards{

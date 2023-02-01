@@ -79,8 +79,9 @@ func (c *Client) GetTimesheets(i Interval) ([]Timesheet, error) {
 	q := c.NewSearch(
 		"account.analytic.line",
 		NewFields(StructToTags(Timesheet{})...),
-		NewWhere("date", ">=", i.Start).
-			And("date", "<", i.End).
+		NewWhere("end", ">=", i.Start).
+			And("end", "<", i.End).
+			And("task_stage_id", "ilike", "approved").
 			And("tokenized", "=", false),
 	)
 	var r []Timesheet
@@ -158,19 +159,16 @@ type Rewards struct {
 func (c *Client) GetRewards() (*Rewards, error) {
 	i := NewInterval(time.Now(), MonthlySchedule)
 	p := i.Decrement()
-	fmt.Println("users")
 	users, err := c.GetUsers()
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("ts")
 	timesheets, err := c.GetTimesheets(p)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("ta")
 	tokenAllocations := CalculateTokenAllocations(users, timesheets)
 
 	rewards := &Rewards{

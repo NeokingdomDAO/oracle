@@ -55,19 +55,20 @@ func (c *Client) Authenticate(db string, username string, password string) error
 }
 
 type Timesheet struct {
-	ID          int          `json:"id"`
-	Name        string       `json:"name"`
-	CreateDate  string       `json:"create_date"`
-	User        IDLabelField `json:"user_id"`
-	Tier        IDLabelField `json:"tier_id"`
-	UnitAmount  float32      `json:"unit_amount"`
-	DisplayName string       `json:"display_name"`
-	Project     IDLabelField `json:"project_id"`
+	ID           int          `json:"id"`
+	Name         string       `json:"name"`
+	ApprovalDate string       `json:"approval_date"`
+	CreateDate   string       `json:"create_date"`
+	User         IDLabelField `json:"user_id"`
+	Tier         IDLabelField `json:"tier_id"`
+	UnitAmount   float32      `json:"unit_amount"`
+	DisplayName  string       `json:"display_name"`
+	Project      IDLabelField `json:"project_id"`
+	TokenAmount  float32      `json:"token_amount"`
+	TaskID       IDLabelField `json:"task_id"`
+	Date         string       `json:"date"`
+	Tokenized    bool         `json:"tokenized"`
 	//Amount      float32      `json:"amount"`
-	TokenAmount float32      `json:"token_amount"`
-	TaskID      IDLabelField `json:"task_id"`
-	Date        string       `json:"date"`
-	Tokenized   bool         `json:"tokenized"`
 }
 
 type TokenizedLine struct {
@@ -79,10 +80,8 @@ func (c *Client) GetTimesheets(i Interval) ([]Timesheet, error) {
 	q := c.NewSearch(
 		"account.analytic.line",
 		NewFields(StructToTags(Timesheet{})...),
-		NewWhere("end", ">=", i.Start).
-			And("end", "<", i.End).
-			And("task_stage_id", "ilike", "approved").
-			And("tokenized", "=", false),
+		NewWhere("approval_date", ">=", i.Start).
+			And("approval_date", "<", i.End),
 	)
 	var r []Timesheet
 	err := c.rpcClient.CallFor(&r, "call", q.ToRequest())
@@ -214,8 +213,8 @@ type RewardsResolution struct {
 func NewRewardsResolution(p *Rewards) *RewardsResolution {
 	title := fmt.Sprintf("Rewarding Contributors for %s", p.Interval.Start.Format("January 2006"))
 	//t, err := template.ParseFiles("cli/templates/resolution-payments.md")
-	t, err := template.New("content").Parse(`1. Object the confirmation of the contributed time by Contributors to teledisko DAO from {{.Interval.Start.Format "02.01.2006"}} to {{.Interval.GetEndInclude.Format "02.01.2006"}} or the minting of the corresponding number of tokens to them in the following manner:{{range $a := .TokenAllocations}}
-    1. {{$a.Name}}, {{printf "%.4f" $a.HoursAmount}} hours, {{printf "%.2f" $a.TokenAmount}} tokens;{{end}}`)
+	t, err := template.New("content").Parse(`1. Object the confirmation of the contributed time by Contributors to the DAO from {{.Interval.Start.Format "02.01.2006"}} to {{.Interval.GetEndInclude.Format "02.01.2006"}} or the minting of the corresponding number of tokens to them in the following manner:{{range $a := .TokenAllocations}}
+    1. {{$a.Name}}, {{printf "%.2f" $a.HoursAmount}} hours, {{printf "%.2f" $a.TokenAmount}} tokens;{{end}}`)
 	if err != nil {
 		panic(err)
 	}
